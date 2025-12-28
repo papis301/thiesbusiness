@@ -66,11 +66,13 @@ const businesses = <?= json_encode($businesses); ?>;
   👉 crée un dossier /icons et mets les images correspondantes
 */
 const icons = {
-    "Boutique": "icons/shop.png",
-    "Restaurant": "icons/restaurant.png",
-    "Service": "icons/service.png",
-    "Hotel": "icons/hotel.png"
+    "boutique": "icons/shop.png",
+    "restaurant": "icons/restaurantes.png",
+    "service": "icons/service.png",
+    "hotel": "icons/hotel.png",
+    "informatique": "icons/informatique.png"
 };
+
 
 function initMap() {
 
@@ -99,8 +101,15 @@ function initMap() {
             },
             map: map,
             title: b.name,
-            icon: icons[b.category_name] || "icons/default.png"
+            icon: {
+                url: icons[b.category_name.toLowerCase()] || "icons/shop.png",
+                scaledSize: new google.maps.Size(32, 32), // 👈 TAILLE ICI
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(16, 32)
+            }
         });
+
+
 
         const content = `
             <div class="info-window">

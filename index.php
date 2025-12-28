@@ -161,7 +161,7 @@
         </p>
 
         <a 
-            href="https://wa.me/221771234567?text=Bonjour%20je%20souhaite%20ajouter%20mon%20business%20sur%20ThiesBusiness"
+            href="https://wa.me/221766487420?text=Bonjour%20je%20souhaite%20ajouter%20mon%20business%20sur%20ThiesBusiness"
             class="btn btn-light btn-lg px-4"
             target="_blank"
         >
@@ -177,7 +177,7 @@
 
 <!-- WhatsApp floating -->
 <a 
-  href="https://wa.me/221771234567"
+  href="https://wa.me/221766487420"
   class="whatsapp-float"
   target="_blank"
 >
