@@ -107,15 +107,25 @@
             Trouvez rapidement boutiques, services, restaurants et professionnels
             proches de vous.
         </p>
-      <form action="map.php" method="get" style="display:flex; gap:5px;">
-    <input
-        type="text"
-        name="q"
-        placeholder="🔍 Rechercher un business"
-        style="padding:8px;width:250px;"
-    >
-    <button type="submit" style="padding:8px;">Rechercher</button>
-</form>
+            <form method="GET" style="margin:10px 0;">
+                <select name="region" id="region">
+                    <option value="">🌍 Toutes les régions</option>
+                    <?php
+                    require 'db.php';
+                    $regions = $pdo->query("SELECT * FROM regions")->fetchAll();
+                    foreach ($regions as $r) {
+                        $selected = ($_GET['region'] ?? '') == $r['id'] ? 'selected' : '';
+                        echo "<option value='{$r['id']}' $selected>{$r['name']}</option>";
+                    }
+                    ?>
+                </select>
+
+                <select name="ville" id="ville">
+                    <option value="">🏙 Toutes les villes</option>
+                </select>
+
+                <button type="submit">Filtrer</button>
+            </form>   
 
 
         <a href="map.php" class="btn btn-warning btn-lg px-4">
