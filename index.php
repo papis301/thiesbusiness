@@ -107,6 +107,17 @@
             Trouvez rapidement boutiques, services, restaurants et professionnels
             proches de vous.
         </p>
+      <form action="map.php" method="get" style="display:flex; gap:5px;">
+    <input
+        type="text"
+        name="q"
+        placeholder="🔍 Rechercher un business"
+        style="padding:8px;width:250px;"
+    >
+    <button type="submit" style="padding:8px;">Rechercher</button>
+</form>
+
+
         <a href="map.php" class="btn btn-warning btn-lg px-4">
             Explorer la carte
         </a>
