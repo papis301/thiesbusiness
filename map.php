@@ -1,11 +1,16 @@
 <?php
 require 'db.php';
 
+// Paramètres
 $q = $_GET['q'] ?? '';
+$id = $_GET['id'] ?? null;
+
+// Coordonnées pour centrer la carte
 $centerLat = $_GET['lat'] ?? 14.791005;
 $centerLng = $_GET['lng'] ?? -16.925502;
 $zoomLevel = $_GET['zoom'] ?? 13;
 
+// Requête principale
 $sql = "
     SELECT b.*, c.name AS category_name
     FROM businesses b
@@ -15,14 +20,29 @@ $sql = "
 
 $params = [];
 
-if ($q) {
-    $sql .= " AND b.name LIKE ?";
-    $params[] = "%$q%";
+// Si un id est passé → afficher uniquement ce business
+if($id){
+    $sql .= " AND b.id = ?";
+    $params[] = $id;
 }
+// Sinon recherche
+elseif($q){
+    $sql .= " AND (LOWER(b.name) LIKE ? OR LOWER(c.name) LIKE ?)";
+    $params[] = "%".strtolower($q)."%";
+    $params[] = "%".strtolower($q)."%";
+}
+
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $businesses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Centrer la carte sur un seul business si id est présent
+if($id && count($businesses) === 1){
+    $centerLat = $businesses[0]['latitude'];
+    $centerLng = $businesses[0]['longitude'];
+    $zoomLevel = 16;
+}
 ?>
 
 <!DOCTYPE html>
@@ -67,17 +87,13 @@ body { margin:0; font-family: Arial, sans-serif; }
     border-radius:5px;
     text-decoration:none;
     font-size:14px;
+    cursor:pointer;
+    border:none;
 }
 
-.share-map {
-    background:#0d6efd;
-    color:#fff;
-}
-
-.share-wa {
-    background:#25D366;
-    color:#fff;
-}
+.share-map { background:#0d6efd; color:#fff; }
+.share-wa { background:#25D366; color:#fff; }
+.share-copy { background:#6c757d; color:#fff; }
 </style>
 </head>
 
@@ -96,6 +112,7 @@ body { margin:0; font-family: Arial, sans-serif; }
         id="searchInput"
         placeholder="🔍 Rechercher un business ou restaurant"
         style="padding:8px;width:260px;"
+        value="<?= htmlspecialchars($q) ?>"
     >
 </div>
 
@@ -104,6 +121,7 @@ body { margin:0; font-family: Arial, sans-serif; }
 <script>
 const businesses = <?= json_encode($businesses); ?>;
 
+// Icônes par catégorie
 const icons = {
     "boutique": "icons/shop.png",
     "restaurant": "icons/restaurant.png",
@@ -114,6 +132,7 @@ const icons = {
 
 let map;
 let markers = [];
+const baseUrl = window.location.origin;
 
 function initMap() {
 
@@ -132,10 +151,7 @@ function initMap() {
     businesses.forEach(b => {
 
         const marker = new google.maps.Marker({
-            position: {
-                lat: parseFloat(b.latitude),
-                lng: parseFloat(b.longitude)
-            },
+            position: { lat: parseFloat(b.latitude), lng: parseFloat(b.longitude) },
             map: map,
             title: b.name,
             icon: {
@@ -145,18 +161,14 @@ function initMap() {
             }
         });
 
-        // 🔍 données pour la recherche
+        // 🔥 Données pour la recherche insensible à la casse
         marker.businessName = b.name.toLowerCase();
         marker.categoryName = b.category_name.toLowerCase();
         marker.quartier = b.quartier.toLowerCase();
-
         markers.push(marker);
 
-        // 🔗 LIENS DE PARTAGE
-        const mapLink = `map.php?lat=${b.latitude}&lng=${b.longitude}&zoom=16`;
-        const waLink = `https://wa.me/?text=${encodeURIComponent(
-            b.name + " 📍 " + mapLink
-        )}`;
+        const mapLink = baseUrl + "/map.php?id=" + b.id + "&zoom=16";
+        const waLink = "https://wa.me/?text=" + encodeURIComponent(b.name + " 📍 " + mapLink);
 
         const content = `
             <div class="info-window">
@@ -172,6 +184,9 @@ function initMap() {
                 <a href="${waLink}" target="_blank" class="share-btn share-wa">
                     💬 WhatsApp
                 </a>
+                <button class="share-btn share-copy" id="copyLinkBtn">
+                    📋 Copier le lien
+                </button>
             </div>
         `;
 
@@ -179,21 +194,35 @@ function initMap() {
 
         marker.addListener("click", () => {
             infoWindow.open(map, marker);
+
+            setTimeout(() => {
+                const btn = document.getElementById("copyLinkBtn");
+                if(btn){
+                    btn.addEventListener("click", () => {
+                        navigator.clipboard.writeText(mapLink).then(() => {
+                            alert("Lien copié dans le presse-papier !");
+                        }).catch(err => {
+                            alert("Erreur : impossible de copier le lien");
+                            console.error(err);
+                        });
+                    });
+                }
+            }, 100);
         });
     });
 }
 
-/* 🔍 RECHERCHE + ZOOM AUTO */
+// 🔍 Recherche instantanée insensible à la casse
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("searchInput");
 
-    if(input.value) {
+    if(input.value){
         const event = new Event('keyup');
-        input.dispatchEvent(event); // applique le filtre dès le chargement
+        input.dispatchEvent(event);
     }
 
     input.addEventListener("keyup", () => {
-        const value = input.value.toLowerCase();
+        const value = input.value.toLowerCase(); // ✅ insensible à la casse
         const bounds = new google.maps.LatLngBounds();
         let visibleCount = 0;
 
@@ -219,7 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
-
 </script>
 
 <script
