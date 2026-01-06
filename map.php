@@ -73,6 +73,32 @@ $centerPoints = [
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+    .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #000;
+    color: #fff;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-back {
+    background: #ffc107;
+    color: #000;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.btn-back:hover {
+    background: #ffca2c;
+}
+
 body { margin:0; font-family: Arial, sans-serif; }
 #map { height:80vh; width:100%; }
 .filters { padding:10px; background:#f8f9fa; display:flex; flex-wrap:wrap; gap:8px; }
@@ -86,6 +112,11 @@ input, select, button { padding:8px; }
 </style>
 </head>
 <body>
+    <div class="top-bar">
+    <a href="index.php" class="btn-back">⬅ Retour</a>
+    <span>📍 Carte des business</span>
+</div>
+
 
 <!-- FILTRES -->
 <div class="filters">
@@ -109,10 +140,7 @@ input, select, button { padding:8px; }
 </div>
 
 <div id="map"></div>
-<div id="zoomControls">
-    <button onclick="map.setZoom(map.getZoom()+1)">➕</button>
-    <button onclick="map.setZoom(map.getZoom()-1)">➖</button>
-</div>
+
 
 <script>
 const businesses = <?= json_encode($businesses) ?>;
@@ -170,15 +198,61 @@ function initMap() {
 
         const content = document.createElement('div');
         content.className="info-window";
-        content.innerHTML = `
-            <strong>${b.name}</strong><br>
-            ${b.category_name}<br>
-            📍 ${b.ville_name ?? 'Inconnue'}, ${b.region_name ?? 'Inconnue'}<br>
-            📞 <a href="tel:${b.phone}">${b.phone}</a><br><br>
-            <button class="share-btn share-copy" onclick="navigator.clipboard.writeText('${shareUrl}')">📋 Copier lien</button>
-            <a href="${shareUrl}" target="_blank" class="share-btn share-map">🔗 URL</a>
-            <a href="${waUrl}" target="_blank" class="share-btn share-wa">💬 WhatsApp</a>
-        `;
+        const imageUrl = b.image
+    ? `uploads/${b.image}`
+    : 'assets/no-image.png'; // image par défaut
+
+content.innerHTML = `
+    <div style="max-width:220px">
+
+        <img 
+            src="${imageUrl}" 
+            alt="${b.name}"
+            style="
+                width:100%;
+                height:120px;
+                object-fit:cover;
+                border-radius:8px;
+                margin-bottom:6px;
+            "
+        >
+
+        <strong>${b.name}</strong><br>
+        <small>${b.category_name}</small><br>
+
+        📍 ${b.ville_name ?? 'Inconnue'}, ${b.region_name ?? 'Inconnue'}<br>
+
+        📞 <a href="tel:${b.phone}">${b.phone}</a><br>
+
+        <hr style="margin:8px 0">
+
+        <div style="
+            font-weight:600;
+            font-size:13px;
+            margin-bottom:6px;
+            color:#333;
+        ">
+            📤 Partager la position
+        </div>
+
+        <button 
+            class="share-btn share-copy"
+            onclick="navigator.clipboard.writeText('${shareUrl}')"
+        >
+            📋 Copier le lien
+        </button>
+
+        <a href="${shareUrl}" target="_blank" class="share-btn share-map">
+            🔗 Ouvrir le lien
+        </a>
+
+        <a href="${waUrl}" target="_blank" class="share-btn share-wa">
+            💬 WhatsApp
+        </a>
+    </div>
+`;
+
+
 
         const infoWindow = new google.maps.InfoWindow({ content });
         marker.addListener("click", ()=>infoWindow.open(map, marker));

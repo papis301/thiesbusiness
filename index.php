@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ThiesBusiness – Tous les business à Thiès</title>
+    <title>SamaBusiness – Tous les business au Senegal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap -->
@@ -90,7 +90,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="#">ThiesBusiness</a>
+    <a class="navbar-brand fw-bold" href="#">SamaBusiness</a>
     <a href="map.php" class="btn btn-warning btn-sm">
         📍 Voir la carte
     </a>
@@ -101,7 +101,7 @@
 <section class="hero text-center">
     <div class="container">
         <h1 class="fw-bold mb-3">
-            Tous les business de Thiès<br>sur une seule carte
+            Tous les business de Senegal<br>sur une seule carte
         </h1>
         <p class="lead mb-4">
             Trouvez rapidement boutiques, services, restaurants et professionnels
@@ -167,7 +167,7 @@
             <div class="category-card">
                 <div class="category-icon">🏨</div>
                 <h5>Hôtels</h5>
-                <p class="text-muted">Hébergement à Thiès</p>
+                <p class="text-muted">Hébergement au Senegal</p>
             </div>
         </div>
     </div>
@@ -176,13 +176,13 @@
 <!-- CTA -->
 <section class="cta py-5 text-center">
     <div class="container">
-        <h3 class="fw-bold mb-3">Vous avez un business à Thiès ?</h3>
+        <h3 class="fw-bold mb-3">Vous avez un business au Senegal ?</h3>
         <p class="mb-4">
-            Contactez l’administrateur et apparaissez sur Google Maps
+            Contactez l’administrateur et apparaissez sur Samabusiness Maps
         </p>
 
         <a 
-            href="https://wa.me/221766487420?text=Bonjour%20je%20souhaite%20ajouter%20mon%20business%20sur%20ThiesBusiness"
+            href="https://wa.me/221766487420?text=Bonjour%20je%20souhaite%20ajouter%20mon%20business%20sur%20SamaBusiness"
             class="btn btn-light btn-lg px-4"
             target="_blank"
         >
@@ -193,7 +193,7 @@
 
 <!-- FOOTER -->
 <footer class="bg-dark text-white text-center py-3">
-    © <?= date('Y') ?> ThiesBusiness – Tous droits réservés
+    © <?= date('Y') ?> SamaBusiness – Tous droits réservés
 </footer>
 
 <!-- WhatsApp floating -->

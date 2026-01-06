@@ -1,7 +1,6 @@
 <?php
 session_start();
 require 'db.php';
-if (!isset($_SESSION['admin'])) header("Location: login.php");
 
 $businesses = $pdo->query("
     SELECT b.*, c.name AS category 
